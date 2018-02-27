@@ -45,9 +45,10 @@ def search_vehicles(vehicle):
     upperVehicle = upper_vehicle(vehicle)
     conn = sqlite3.connect(db_url)
     cursor = conn.cursor()
-    search = cursor.execute('SELECT * FROM MILES WHERE vehicle = (?)', (upperVehicle,) )
-    for row in search:
-        print(row)
+    miles = cursor.execute('SELECT total_miles FROM MILES WHERE vehicle = (?)', (upperVehicle,)).fetchall()
+    for row in miles:
+        print(upperVehicle, miles)
+        return miles
     search2 = cursor.execute('SELECT count(*) FROM MILES WHERE vehicle = (?)', (upperVehicle,))
     for row in search2:
         if row == (0,):

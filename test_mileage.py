@@ -101,38 +101,20 @@ class TestSearchDB(TestCase):
         conn.close()
 
     def test_search(self):
-        mileage.search_vehicles('black car')
-        expected = { 'BLACK CAR': 50, 'BROWN CAR': 150, 'BLUE CAR': 500 }
-        self.compare_db_to_expected(expected)
+        search = mileage.search_vehicles('BLACK CAR')
+        expected = [(50,)]
+        self.assertEqual(expected, search)
 
-    def test_search(self):
-        mileage.search_vehicles('brOWN car')
-        expected = { 'BLACK CAR': 50, 'BROWN CAR': 150, 'BLUE CAR': 500 }
-        self.compare_db_to_expected(expected)
+    def test_search1(self):
+        search = mileage.search_vehicles('brown car')
+        expected = [(150,)]
+        self.assertEqual(expected, search)
 
-    def test_search(self):
-        mileage.search_vehicles('blue car')
-        expected = { 'BLACK CAR': 50, 'BROWN CAR': 150, 'BLUE CAR': 500}
-        self.compare_db_to_expected(expected)
+    def test_search2(self):
+        search = mileage.search_vehicles('blUE cAr')
+        expected = [(500,)]
+        self.assertEqual(expected, search)
 
     def test_none(self):
-        
+
         self.assertIsNone(mileage.search_vehicles('grey car'))
-
-
-    # This is not a test method, instead, it's used by the test methods
-    def compare_db_to_expected(self, expected):
-
-        conn = sqlite3.connect(self.test_db_url)
-        cursor = conn.cursor()
-        all_data = cursor.execute('SELECT * FROM MILES').fetchall()
-
-        # Same rows in DB as entries in expected dictionary
-        self.assertEqual(len(expected.keys()), len(all_data))
-        for row in all_data:
-            print ('ROW: ', row)
-            print ('EXP: ', expected)
-            # Vehicle exists, and mileage is correct
-            self.assertIn(row[0], expected.keys())
-            self.assertEqual(expected[row[0]], row[1])
-        conn.close()
